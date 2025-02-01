@@ -1,10 +1,16 @@
 #include <GL/glew.h>
 #include <chrono>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/fwd.hpp>
 #include <ios>
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
 #include <cmath>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <utils.h>
 
 // #define WINDOW_HEIGHT 1200
@@ -13,6 +19,7 @@
 #define WINDOW_WIDTH 1200
 
 int main() {
+  auto t_start = std::chrono::system_clock::now();
   if (!glfwInit())
     return -1;
 
@@ -30,20 +37,73 @@ int main() {
   if (glewInit() != GLEW_OK)
     return -1;
 
-  // float vertices[] = {0.0f, 0.5f,  1.0f, 0.0f,  0.0f,  0.5f, -0.5f,
-  //                     0.0f, 1.0f,  0.0f, -0.5f, -0.5f, 0.0      -0.5f,
-  //                     0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
-  // f, 0.0f,
-  //                     1.0f, -1.0f, 0.5f, 0.0f,  0.0f,  0.0f};
-  float vertices[] = {
-      //  Position   Color            Texcoords
-      0.8f,  0.8f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // Top-right
-      -0.8f, 0.8f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // Top-left
-      0.8f,  -0.8f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // Bottom-right
-      -0.8f, -0.8f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // Bottom-left
+  glEnable(GL_DEPTH_TEST);
+
+  // GLfloat vertices[] = {
+  //     //  Position         Color             Texcoords
+  //     0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // 0 - Bottom-right
+  //     -0.5f, -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // 1 - Bottom-left
+  //     0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // 2 - Top-right
+  //     -0.5f, 0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // 3 - Top-left
+  //     0.5f,  -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // 4 - Bottom-right
+  //     -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // 5 - Bottom-left
+  //     0.5f,  0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // 6 - Top-right
+  //     -0.5f, 0.5f,  -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // 7 - Top-left
+  //     0.5f,  0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f  // 6 - Top-right
+  // };
+
+  GLfloat vertices[] = {
+      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
+      0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
+
+      -0.5f, -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
+      0.5f,  -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      -0.5f, 0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      -0.5f, -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
+
+      -0.5f, 0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      -0.5f, -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
+      -0.5f, 0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+
+      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      0.5f,  -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
+      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+
+      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      0.5f,  -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      0.5f,  -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      -0.5f, -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
+      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+
+      -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      -0.5f, 0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
+      -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  //, 0.0f // yeah no
   };
 
-  GLuint elements[] = {3, 2, 1, 2, 1, 0};
+  // GLuint elements[] = {
+  //     0, 1, 2, 1, 2, 3, // top plane
+  //     4, 5, 6, 5, 6, 7, // bottom plane
+  //     0, 1, 4, 1, 4, 5, // left bl-wh
+  //     0, 2, 4, 2, 4, 6, // fwd
+  //     1, 3, 5, 3, 5, 7, // bck
+  //     2, 3, 6, 3, 6, 7, // right rd-green
+  // };
 
   GLuint vao;
   glGenVertexArrays(1, &vao);
@@ -54,42 +114,16 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  GLuint ebo;
-  glGenBuffers(1, &ebo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements,
-               GL_STATIC_DRAW);
+  // GLuint ebo;
+  // glGenBuffers(1, &ebo);
+  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements,
+  //              GL_STATIC_DRAW);
 
-  std::string vertexSourceString = utils::readFile("src/shaders/triangle.vert");
-  const char *vertexSource = vertexSourceString.c_str();
-  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &vertexSource, NULL);
-  glCompileShader(vertexShader);
-  GLint status;
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &status);
-  if (status != GL_TRUE) {
-    char buffer[512];
-    glGetShaderInfoLog(vertexShader, 512, NULL, buffer);
-    std::cout << buffer << std::endl;
-    std::cerr << "vertex shader failed to compile" << std::endl;
-    return -1;
-  }
-
-  std::string fragmentSourceString =
-      utils::readFile("src/shaders/triangle.frag");
-  // std::cout << fragmentSourceString << std::endl;
-  const char *fragmentSource = fragmentSourceString.c_str();
-  GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
-  glCompileShader(fragmentShader);
-  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &status);
-  if (status != GL_TRUE) {
-    char buffer[512];
-    glGetShaderInfoLog(fragmentShader, 512, NULL, buffer);
-    std::cout << buffer << std::endl;
-    std::cerr << "fragment shader failed to compile" << std::endl;
-    return -1;
-  }
+  auto vertexShader =
+      utils::makeShader("src/shaders/triangle.vert", GL_VERTEX_SHADER);
+  auto fragmentShader =
+      utils::makeShader("src/shaders/triangle.frag", GL_FRAGMENT_SHADER);
 
   GLuint shaderProgram = glCreateProgram();
   glAttachShader(shaderProgram, vertexShader);
@@ -101,17 +135,17 @@ int main() {
 
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
   glEnableVertexAttribArray(posAttrib);
-  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
+  glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
 
   GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
   glEnableVertexAttribArray(colAttrib);
-  glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
-                        (void *)(2 * sizeof(float)));
+  glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                        (void *)(3 * sizeof(float)));
 
   GLint texAttrib = glGetAttribLocation(shaderProgram, "texCord");
   glEnableVertexAttribArray(texAttrib);
-  glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
-                        (void *)(5 * sizeof(float)));
+  glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                        (void *)(6 * sizeof(float)));
 
   // GLuint tex;
   // glGenTextures(1, &tex);
@@ -121,48 +155,67 @@ int main() {
   GLuint tex[3];
   glGenTextures(3, tex);
   // glBindTexture(GL_TEXTURE_2D, tex);
-  // auto image = utils::getImage("res/spinner.png");
-  utils::getImage("res/spinner.png", GL_TEXTURE0, tex[0]);
   utils::getImage("res/mask.png", GL_TEXTURE1, tex[1]);
   utils::getImage("res/glass.png", GL_TEXTURE2, tex[2]);
 
-  // int width, height;
-  // unsigned char *image =
-  //     SOIL_load_image("res/spinner.png", &width, &height, 0, SOIL_LOAD_RGBA);
-  // // SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGBA);
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-  //              GL_UNSIGNED_BYTE, image);
-  // // for (int i = 0; i <= 300; i++) {
-  // //   std::cout << image[i];
-  // // }
-  // // std::cout << std::endl;
-  // SOIL_free_image_data(image);
-  glUniform1i(glGetUniformLocation(shaderProgram, "texSpinner"), 0);
   glUniform1i(glGetUniformLocation(shaderProgram, "texMask"), 1);
   glUniform1i(glGetUniformLocation(shaderProgram, "texGlass"), 2);
 
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  // glGenerateMipmap(GL_TEXTURE_2D);
-  // auto timer = new utils::Timer();
+  glm::mat4 model = glm::mat4(0.5f);
+  GLint uniModel = glGetUniformLocation(shaderProgram, "model");
+  glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
+
+  glm::mat4 view = glm::lookAt(    //
+      glm::vec3(1.2f, 1.2f, 1.2f), //
+      glm::vec3(0.0f, 0.0f, 0.f),  //
+      glm::vec3(0.0f, 0.0f, 1.0f)  //
+  );
+
+  GLint uniView = glGetUniformLocation(shaderProgram, "view");
+  glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
+
+  glm::mat4 proj = glm::perspective(glm::radians(45.0f),                   //
+                                    (1.0f * WINDOW_WIDTH) / WINDOW_HEIGHT, //
+                                    1.0f,                                  //
+                                    20.0f);
+  GLint uniProj = glGetUniformLocation(shaderProgram, "projection");
+  glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
+
+  // for (int i = 0; i < 4; i++) {
+  //   for (int j = 0; j < 4; j++) {
+  //     std::cout << proj[i][j] << " ";
+  //   }
+  //   std::cout << std::endl;
+  // }
+
+  float time = 0;
 
   while (!glfwWindowShouldClose(window)) {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
+    auto t_now = std::chrono::system_clock::now();
+    float t_diff = std::chrono::duration_cast<std::chrono::duration<float>>(
+                       t_now - t_start)
+                       .count();
+    t_start = t_now;
+    t_diff *= 0.2;
+    time += t_diff;
+    time = time - floor(time);
 
-    // float time = timer->now();
-    // glUniform3f(uniColor, (sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
+    glm::mat4 model = glm::mat4(0.5f);
+    model = glm::rotate(model,                       // model,
+                        glm::radians(360.0f) * time, // * glm::radians(0.1f), //
+                        glm::vec3(0.0f, 0.0f, 1.0f));
+    glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
+    // std::cout << time << std::endl;
 
     glUseProgram(shaderProgram);
 
     glBindVertexArray(vao);
 
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -177,7 +230,7 @@ int main() {
   glDeleteProgram(fragmentShader);
   glDeleteProgram(vertexShader);
 
-  glDeleteBuffers(1, &ebo);
+  // glDeleteBuffers(1, &ebo);
   glDeleteBuffers(1, &vbo);
 
   glDeleteVertexArrays(1, &vao);

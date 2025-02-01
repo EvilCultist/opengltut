@@ -70,6 +70,31 @@ void utils::getImage(std::string filePath, GLenum tex, GLint loc) {
   SOIL_free_image_data(image);
 }
 
+int checkIfShaderDidOk(GLuint shader) {
+  GLint status;
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+  if (status != GL_TRUE) {
+    char buffer[512];
+    glGetShaderInfoLog(shader, 512, NULL, buffer);
+    std::cout << buffer << std::endl;
+    std::cerr << "vertex shader failed to compile" << std::endl;
+    return -1;
+  }
+  return 0;
+}
+
+GLint utils::makeShader(std::string path, GLenum type) {
+  std::string sourceString = utils::readFile(path);
+  const char *source = sourceString.c_str();
+  GLuint shader = glCreateShader(type);
+  glShaderSource(shader, 1, &source, NULL);
+  glCompileShader(shader);
+  if (checkIfShaderDidOk(shader) == 0) {
+    return shader;
+  }
+  return -1;
+}
+
 // void utils::removeImage(unsigned char *image) {}
 
 // void utils::mkImage(const std::string &filepath) {

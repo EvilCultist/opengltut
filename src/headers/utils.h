@@ -17,6 +17,7 @@ private:
 void glfwHints();
 std::string readFile(const std::string &filepath);
 void getImage(std::string filePath, GLenum tex, GLint loc);
+GLint makeShader(std::string path, GLenum type);
 // void removeImage(unsigned char *image);
 // void mkImage(const std::string &filepath);
 } // namespace utils
