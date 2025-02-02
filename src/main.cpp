@@ -37,8 +37,6 @@ int main() {
   if (glewInit() != GLEW_OK)
     return -1;
 
-  glEnable(GL_DEPTH_TEST);
-
   // GLfloat vertices[] = {
   //     //  Position         Color             Texcoords
   //     0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // 0 - Bottom-right
@@ -53,47 +51,54 @@ int main() {
   // };
 
   GLfloat vertices[] = {
-      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
-      0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
-      0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
-      0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
-      -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
-      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
+      -1.5f, -1.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, // yeah no
+      1.5f,  -1.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, // yeah no
+      1.5f,  1.5f,  -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, // yeah no
+      1.5f,  1.5f,  -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, // yeah no
+      -1.5f, 1.5f,  -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // yeah no
+      -1.5f, -1.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, // yeah no
 
-      -0.5f, -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
-      0.5f,  -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
-      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
-      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
-      -0.5f, 0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
-      -0.5f, -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
+      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, // yeah no
+      0.5f,  -0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      0.5f,  0.5f,  -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      0.5f,  0.5f,  -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, // yeah no
 
-      -0.5f, 0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
-      -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
-      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
-      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
-      -0.5f, -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
-      -0.5f, 0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      -0.5f, -0.5f, 0.5f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f, // yeah no
+      0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      -0.5f, 0.5f,  0.5f,  1.0f, 0.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      -0.5f, -0.5f, 0.5f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f, // yeah no
 
-      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
-      0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
-      0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
-      0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
-      0.5f,  -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
-      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      -0.5f, 0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 1.0f, 0.0f, // yeah no
+      -0.5f, 0.5f,  -0.5f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // yeah no
+      -0.5f, 0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 1.0f, 0.0f, // yeah no
 
-      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
-      0.5f,  -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
-      0.5f,  -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
-      0.5f,  -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
-      -0.5f, -0.5f, 0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
-      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 1.0f, 0.0f, // yeah no
+      0.5f,  0.5f,  -0.5f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      0.5f,  -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      0.5f,  -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
+      0.5f,  -0.5f, 0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // yeah no
+      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 1.0f, 0.0f, // yeah no
 
-      -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // yeah no
-      0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // yeah no
-      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
-      0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
-      -0.5f, 0.5f,  0.5f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // yeah no
-      -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  //, 0.0f // yeah no
+      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, // yeah no
+      0.5f,  -0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      0.5f,  -0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      0.5f,  -0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      -0.5f, -0.5f, 0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // yeah no
+      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, // yeah no
+
+      -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, // yeah no
+      0.5f,  0.5f,  -0.5f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, // yeah no
+      0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 1.0f, 0.0f, // yeah no
+      -0.5f, 0.5f,  0.5f,  1.0f, 0.5f, 0.5f, 0.0f, 0.0f, // yeah no
+      -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f  //, 0.0f // yeah no
   };
 
   // GLuint elements[] = {
@@ -166,7 +171,7 @@ int main() {
   glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
   glm::mat4 view = glm::lookAt(    //
-      glm::vec3(1.2f, 1.2f, 1.2f), //
+      glm::vec3(4.2f, 4.2f, 2.0f), //
       glm::vec3(0.0f, 0.0f, 0.f),  //
       glm::vec3(0.0f, 0.0f, 1.0f)  //
   );
@@ -181,6 +186,8 @@ int main() {
   GLint uniProj = glGetUniformLocation(shaderProgram, "projection");
   glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 
+  auto uniOverride = glGetUniformLocation(shaderProgram, "overrideColor");
+
   // for (int i = 0; i < 4; i++) {
   //   for (int j = 0; j < 4; j++) {
   //     std::cout << proj[i][j] << " ";
@@ -190,8 +197,10 @@ int main() {
 
   float time = 0;
 
+  glEnable(GL_DEPTH_TEST);
+
   while (!glfwWindowShouldClose(window)) {
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     auto t_now = std::chrono::system_clock::now();
@@ -203,7 +212,7 @@ int main() {
     time += t_diff;
     time = time - floor(time);
 
-    glm::mat4 model = glm::mat4(0.5f);
+    glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model,                       // model,
                         glm::radians(360.0f) * time, // * glm::radians(0.1f), //
                         glm::vec3(0.0f, 0.0f, 1.0f));
@@ -212,10 +221,37 @@ int main() {
 
     glUseProgram(shaderProgram);
 
+    glUniform3f(uniOverride, 1.0f, 1.0f, 1.0f);
+
     glBindVertexArray(vao);
 
     // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_TRIANGLES, 6, 36);
+
+    glUniform3f(uniOverride, 0.4f, 0.4f, 0.4f);
+
+    glEnable(GL_STENCIL_TEST);
+
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glStencilMask(0xFF);
+    glDepthMask(GL_FALSE);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glDepthMask(GL_TRUE);
+    glStencilFunc(GL_EQUAL, 1, 0xFF);
+    glStencilMask(0x00);
+
+    model = glm::scale(                                      //
+        glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f)), // no
+        glm::vec3(1.0f, 1.0f, -1.0f));
+
+    glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
+    glDrawArrays(GL_TRIANGLES, 6, 36);
+
+    glDisable(GL_STENCIL_TEST);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
