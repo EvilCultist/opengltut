@@ -110,6 +110,10 @@ int main() {
   //     2, 3, 6, 3, 6, 7, // right rd-green
   // };
 
+  GLuint fbo;
+  glGenFramebuffers(1, &fbo);
+  glBindBuffer(GL_FRAMEBUFFER, fbo);
+
   GLuint vao;
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
@@ -268,6 +272,7 @@ int main() {
 
   // glDeleteBuffers(1, &ebo);
   glDeleteBuffers(1, &vbo);
+  glDeleteBuffers(1, &fbo);
 
   glDeleteVertexArrays(1, &vao);
 
