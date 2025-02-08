@@ -114,6 +114,25 @@ int main() {
   glGenFramebuffers(1, &fbo);
   glBindBuffer(GL_FRAMEBUFFER, fbo);
 
+  GLuint texColorBuffer;
+  glGenTextures(1, &texColorBuffer);
+  glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WINDOW_WIDTH, WINDOW_HEIGHT, 0, GL_RGB,
+               GL_UNSIGNED_BYTE, NULL);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  GLuint rboDepthStencil;
+  glGenRenderbuffers(1, &rboDepthStencil);
+  glBindRenderbuffer(GL_RENDERBUFFER, rboDepthStencil);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WINDOW_WIDTH,
+                        WINDOW_HEIGHT);
+
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                            GL_RENDERBUFFER, rboDepthStencil);
+  glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
   GLuint vao;
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
@@ -273,6 +292,7 @@ int main() {
   // glDeleteBuffers(1, &ebo);
   glDeleteBuffers(1, &vbo);
   glDeleteBuffers(1, &fbo);
+  glDeleteRenderbuffers(1, &rboDepthStencil);
 
   glDeleteVertexArrays(1, &vao);
 
